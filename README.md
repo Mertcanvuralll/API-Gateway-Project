@@ -101,7 +101,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-
+```
 ---
 
 ## **Swagger Endpoints**
@@ -133,7 +133,7 @@ services:
   "username": "admin",
   "password": "admin123"
 }
-
+```
 ---
 
 ## **Port Mapping**
