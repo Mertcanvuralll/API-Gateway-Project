@@ -1,0 +1,431 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Gateway - Airline System",
+    "version": "1.0.0",
+    "description": "API Gateway for the Airline project, routing requests to microservices."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/admin/flights": {
+      "post": {
+        "summary": "Add a new flight",
+        "tags": ["Admin (Service-A)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": { "type": "string", "example": "Istanbul" },
+                  "to": { "type": "string", "example": "Ankara" },
+                  "dateRange": {
+                    "type": "array",
+                    "items": { "type": "string", "format": "date" },
+                    "example": ["2024-12-20", "2024-12-25"]
+                  },
+                  "days": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "example": ["Monday", "Wednesday"]
+                  },
+                  "capacity": { "type": "integer", "example": 150 }
+                },
+                "required": ["from", "to", "dateRange", "days", "capacity"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Flight added successfully" },
+          "400": { "description": "Missing required parameters" }
+        }
+      }
+    },
+    "/admin/flights/capacity": {
+      "get": {
+        "summary": "Get flights by capacity",
+        "tags": ["Admin (Service-A)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Istanbul"
+            },
+            "description": "Departure location for the flight"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Ankara"
+            },
+            "description": "Arrival location for the flight"
+          },
+          {
+            "name": "dateRange",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2024-12-20"
+            },
+            "description": "Date for filtering flights (in YYYY-MM-DD format)"
+          },
+          {
+            "name": "capacity",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 150
+            },
+            "description": "Minimum capacity of the flight"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "example": 0
+            },
+            "description": "Pagination offset for results"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "example": 10
+            },
+            "description": "Pagination limit for results"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flights fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer", "example": 1 },
+                      "from": { "type": "string", "example": "Istanbul" },
+                      "to": { "type": "string", "example": "Ankara" },
+                      "dateRange": { "type": "string", "example": "2024-12-20" },
+                      "capacity": { "type": "integer", "example": 200 }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Missing required parameter: capacity" }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Access denied. Admins only." }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "tags": ["Auth (Service-B)"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string", "example": "admin" },
+                  "password": { "type": "string", "example": "admin123" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string", "example": "eyJhbGciOiJIUzI1Ni**************************" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid username or password" }
+        }
+      }
+    },
+    "/tickets": {
+      "post": {
+        "summary": "Purchase a ticket",
+        "tags": ["Mobile (Service-C)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "flightId": { "type": "integer", "example": 1 },
+                  "passengerName": { "type": "string", "example": "John Doe" }
+                },
+                "required": ["flightId", "passengerName"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Ticket purchased successfully" },
+          "400": { "description": "Invalid flight or no available seats" }
+        }
+      }
+    },
+    "/mobile/flights": {
+      "get": {
+        "summary": "Query flights with paging",
+        "tags": ["Mobile (Service-C)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Istanbul"
+            },
+            "description": "Departure location for the flight"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Ankara"
+            },
+            "description": "Arrival location for the flight"
+          },
+          {
+            "name": "dateRange",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2024-12-20"
+            },
+            "description": "Date for filtering flights"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "example": 0
+            },
+            "description": "Pagination offset for results"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "example": 10
+            },
+            "description": "Pagination limit for results"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flights fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer", "example": 1 },
+                      "from": { "type": "string", "example": "Istanbul" },
+                      "to": { "type": "string", "example": "Ankara" },
+                      "dateRange": { "type": "string", "example": "2024-12-20" },
+                      "capacity": { "type": "integer", "example": 200 }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Invalid or missing parameters" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickets/checkin": {
+      "post": {
+        "summary": "Check in for a flight",
+        "tags": ["Mobile (Service-C)"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ticketId": { "type": "integer", "example": 101 }
+                },
+                "required": ["ticketId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Check-in successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "Check-in successful" },
+                    "ticketId": { "type": "integer", "example": 101 }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ticket or already checked in"
+          }
+        }
+      }
+    },
+    "/make-payment": {
+      "post": {
+        "summary": "Make a Payment",
+        "tags": ["Payment"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user": { "type": "string", "example": "ali@gmail.com" },
+                  "paymentType": { "type": "string", "example": "credit" },
+                  "cardNo": { "type": "string", "example": "1234123412341234" }
+                },
+                "required": ["user", "paymentType", "cardNo"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Payment request sent successfully" },
+          "500": { "description": "Error processing payment" }
+        }
+      }
+    }
+  }
+}

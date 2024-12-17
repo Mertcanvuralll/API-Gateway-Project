@@ -1,0 +1,17 @@
+{
+    "name": "api-gateway",
+    "version": "1.0.0",
+    "main": "api-gateway.js",
+    "scripts": {
+        "start": "node api-gateway.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "keywords": [],
+    "description": "",
+    "dependencies": {
+        "express": "^4.21.2",
+        "http-proxy": "^1.18.1",
+        "swagger-ui-express": "^5.0.1"
+    }
+}

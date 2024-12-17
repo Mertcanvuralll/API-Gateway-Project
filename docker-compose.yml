@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  service-a:
+    build:
+      context: ./service-A
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+
+  service-b:
+    build:
+      context: ./service-B
+    ports:
+      - "3002:3002"
+    networks:
+      - app-network
+
+  service-c:
+    build:
+      context: ./service-C
+    ports:
+      - "3003:3003"
+    networks:
+      - app-network
+
+  payment-service:
+    build:
+      context: ./payment-service
+    ports:
+      - "3004:3004"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - service-a
+      - service-b
+      - service-c
+      - payment-service
+      - rabbitmq
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # AMQP protokolü için port
+      - "15672:15672"   # RabbitMQ yönetim paneli için port
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
