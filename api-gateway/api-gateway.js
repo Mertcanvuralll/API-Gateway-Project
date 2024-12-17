@@ -17,7 +17,7 @@ const serviceBUrl = 'http://service-b:3002';
 const serviceCUrl = 'http://service-c:3003';
 const paymentServiceUrl = 'http://payment-service:3004'; // Make Payment Service URL
 
-// Service-A için yönlendirmeler
+// Routes for Service A
 app.all('/admin/*', (req, res) => {
     console.log(`Proxying request to Service A: ${req.method} ${req.url}`);
     proxy.web(req, res, { target: serviceAUrl }, (err) => {

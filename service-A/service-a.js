@@ -5,11 +5,12 @@ const { authenticate, authorizeAdmin } = require('./middlewares/auth');
 
 app.use(express.json());
 
-// Flight verilerini tutmak için basit bir dizi
+// A simple array to store flight data
 let flights = [];
 
-// Admin: Yeni uçuş ekleme
+// Admin: Add new flight
 app.post('/admin/flights', authenticate, authorizeAdmin, (req, res) => {
+    console.log('Received POST /admin/flights request');
     const { from, to, dateRange, days, capacity } = req.body;
 
     if (!from || !to || !dateRange || !days || !capacity) {
@@ -30,8 +31,9 @@ app.post('/admin/flights', authenticate, authorizeAdmin, (req, res) => {
     res.status(201).json({ message: 'Flight added successfully', flight: newFlight });
 });
 
-// Admin: Kapasiteye göre uçuşları listeleme
+// Admin: List flights by capacity
 app.get('/admin/flights/capacity', authenticate, authorizeAdmin, (req, res) => {
+    console.log('Received GET /admin/flights/capacity request');
     const { capacity } = req.query;
 
     if (!capacity) {
@@ -42,7 +44,7 @@ app.get('/admin/flights/capacity', authenticate, authorizeAdmin, (req, res) => {
     res.status(200).json({ flights: filteredFlights });
 });
 
-// Uygulamayı başlat
+// Start the application
 app.listen(port, () => {
     console.log(`Service A running on port ${port}`);
 });

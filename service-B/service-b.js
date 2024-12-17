@@ -11,6 +11,7 @@ const users = [
 ];
 
 app.post('/auth/login', (req, res) => {
+    console.log('Received POST /auth/login request');
     const { username, password } = req.body;
 
     const user = users.find(u => u.username === username && u.password === password);

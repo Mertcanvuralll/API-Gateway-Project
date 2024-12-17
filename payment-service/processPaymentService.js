@@ -17,7 +17,7 @@ async function processPayment() {
             const payment = JSON.parse(msg.content.toString());
             console.log('Processing payment:', payment);
 
-            // Gönderimi Notification Queue'ya yap
+            // Send to Notification Queue
             const notification = {
                 user: payment.user,
                 message: 'Payment processed successfully!'

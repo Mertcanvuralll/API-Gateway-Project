@@ -7,14 +7,14 @@ WORKDIR /usr/src/app
 # Copy package.json ve package-lock.json
 COPY package*.json ./
 
-# Bağımlılıkları Yükleme
+# Installing Dependencies
 RUN npm install
 
-# Kodları Kopyalama
+# Copying Code
 COPY . .
 
-# Port Tanımlama
+# Defining Port
 EXPOSE 3004
 
-# Servisi Başlatma
+# Starting the Service
 CMD ["npm", "start"]

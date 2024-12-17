@@ -7,7 +7,7 @@ app.use(express.json());
 const PAYMENT_QUEUE = 'paymentQueue';
 
 async function sendToQueue(data) {
-    const connection = await amqp.connect('amqp://rabbitmq'); // RabbitMQ Host adı: rabbitmq
+    const connection = await amqp.connect('amqp://rabbitmq'); // RabbitMQ Hostname: rabbitmq
     const channel = await connection.createChannel();
     await channel.assertQueue(PAYMENT_QUEUE, { durable: true });
     channel.sendToQueue(PAYMENT_QUEUE, Buffer.from(JSON.stringify(data)));

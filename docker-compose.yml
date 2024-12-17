@@ -56,8 +56,8 @@ services:
     image: rabbitmq:management
     container_name: rabbitmq
     ports:
-      - "5672:5672"     # AMQP protokolü için port
-      - "15672:15672"   # RabbitMQ yönetim paneli için port
+      - "5672:5672"     # Port for AMQP protocol
+      - "15672:15672"   # Port for RabbitMQ management panel
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest

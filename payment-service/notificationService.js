@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 
 const NOTIFICATION_QUEUE = 'notificationQueue';
 
-// E-posta Gönderim Ayarları
+// Email Sending Settings
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
