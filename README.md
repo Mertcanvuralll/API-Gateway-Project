@@ -2,7 +2,12 @@
 
 This project implements a **microservice architecture** for an **Airline System** using an **API Gateway** to route requests to different services. It leverages **Docker Compose** for container orchestration, and **RabbitMQ** for asynchronous messaging. **Swagger UI** is integrated for API documentation and testing.
 
-Swagger UI: http://localhost:3000/api-docs/
+---
+
+## **Project Links**
+- **Source Code:** https://github.com/Mertcanvuralll/API-Gateway-Project
+- **Swagger UI:** http://localhost:3000/api-docs/
+- **Demonstration Video:** https://www.youtube.com/watch?v=BJv6O34-jN4
 
 ---
 
